@@ -160,10 +160,26 @@ Inspect logs:
   no URL is configured, tell the user to set `gi config service url=<url>`
   before enabling self-registration. Ask one short question if no local config
   location is documented.
-- For applications that must register themselves in config-service, require a
-  live config-service config check on every process startup before publishing or
-  refreshing the app's own service record. Use cached config only as an explicit
+- For web-facing applications that expose a port, HTTP API, web UI, task-manager
+  service, or local daemon endpoint, require a live config-service config check
+  on every process startup before publishing or refreshing the app's own service
+  record. On startup, query the app's own `service_id`; if no record exists,
+  create one with the current port and documented endpoints, and if the record
+  exists but the port or endpoints changed, refresh it. Desktop apps, CLI tools,
+  libraries, scripts, and other non-web applications must not query or publish
+  to config-service during normal startup unless local instructions explicitly
+  define a discoverable web/API runtime. Use cached config only as an explicit
   degraded-startup fallback documented by local run instructions.
+- Treat `gi ftp`, `ги фтп`, `gi upload ftp`, `gi deploy ftp`, and
+  `gi залей на фтп` as requests to upload the current project's configured
+  build output to FTP, FTPS, or SFTP. Treat `gi ftp config`, `gi ftp конфиг`,
+  and `ги фтп конфиг` as requests to create, inspect, or update the
+  project-local FTP/SFTP config without uploading. Read project-local deploy
+  instructions and `tools/deploy/ftp.local.json` first; keep FTP/SFTP settings
+  in that separate project-local config file rather than shared instructions or
+  chat history. Prefer `tools/deploy/ftp.local.example.json` only as a redacted
+  shape. Do not commit hostnames, usernames, passwords, tokens, private keys, or
+  private remote paths unless project policy explicitly marks them non-secret.
 - Treat `gi reboot`, `ги ребут`, `gi restart`, and `ги рестарт` as requests to
   start or restart the current application using project-local run instructions.
   If the app is running, restart it; if it is not running, start it. Launch in
@@ -242,6 +258,16 @@ Inspect logs:
 - `gi start` and `gi restore` must not promote remembered plans, old task notes,
   or local commits ahead of a remote into suggested next actions unless the user
   explicitly asks to continue, run, push, or finish them.
+- Run `gi обновить` quietly by default. Do not narrate step-by-step reasoning,
+  repeated progress, command transcripts, broad file reads, or full diffs during
+  normal successful updates. Apply the update, then report a compact summary
+  with versions, migration counts/IDs, changed files, checks, commit/push
+  result, and blockers if any.
+- Keep `gi обновить` scoped to accepted instruction-kit updates and migrations.
+  Do not reinterpret it as a request to push pre-existing local commits, sync a
+  feature branch, resume a remembered plan, or perform general Git maintenance.
+  Commit or push only changes created by the update flow itself and only when
+  local update policy permits it.
 - Treat short greetings, thanks, acknowledgements, and status-neutral messages
   as no-ops unless they include an explicit task, path, command, error, or
   project question. Do not run startup restore for those messages.

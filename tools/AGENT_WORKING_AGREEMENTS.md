@@ -189,6 +189,18 @@ or:
 - `gi` means `general-instructions`, not `git`. Missing `.git` blocks only the
   automatic commit/push step after a successful GI update; it does not block
   checking or applying instruction-kit file updates.
+- Keep `gi обновить` scoped to accepted instruction-kit updates and migrations.
+  Do not reinterpret it as a request to push pre-existing local commits, sync a
+  feature branch, resume a remembered plan, or perform general Git maintenance.
+  Commit or push only changes created by the update flow itself and only when
+  local update policy permits it.
+- Treat `gi ftp`, `ги фтп`, `gi upload ftp`, `gi deploy ftp`, and
+  `gi залей на фтп` as requests to upload the current project's configured build
+  output to FTP, FTPS, or SFTP. Treat `gi ftp config`, `gi ftp конфиг`, and
+  `ги фтп конфиг` as requests to create, inspect, or update
+  `tools/deploy/ftp.local.json` without uploading. Do not commit real FTP/SFTP
+  hostnames, usernames, passwords, tokens, private keys, or private remote paths
+  unless project policy explicitly marks them non-secret.
 - Treat `gi саммари` and `gi summary` as requests to write a handoff summary
   file under `tools/summary/`, not only as requests to summarize in chat.
 - Treat `gi гит-обзор` and `gi git summary` as requests to summarize the latest
